@@ -1,26 +1,26 @@
 name: RB-Backend build
 
 on:
-  push:
-    branches:
-      - master
-      
+    push:
+        branches:
+            - master
+
 jobs:
-  Nest-Build-ssh-action:
-    runs-on: ubuntu-latest
-    name: Build
-    steps:
-      - name: SSH Remote Commands
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          key: ${{ secrets.SSH_KEY }}
-          port: 22
-          scripts: |
-            cd ${{ github.event.repository.name }}
-            git pull origin main
-            npm ci
-            npm run build
-            pm2 restart rb-backend
+    Nest-Build-ssh-action:
+        runs-on: ubuntu-latest
+        name: Build
+        steps:
+            - name: SSH Remote Commands
+              uses: appleboy/ssh-action@v0.1.10
+              with:
+                  host: ${{ secrets.HOST }}
+                  username: ${{ secrets.USERNAME }}
+                  password: ${{ secrets.PASSWORD }}
+                  key: ${{ secrets.SSH_KEY }}
+                  port: 22
+                  script: |
+                      cd ${{ github.event.repository.name }}
+                      git pull origin main
+                      npm ci
+                      npm run build
+                      pm2 restart rb-backend
