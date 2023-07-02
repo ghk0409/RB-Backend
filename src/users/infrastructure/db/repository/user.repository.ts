@@ -12,6 +12,8 @@ export class UserRepository implements IUserRepository {
     private readonly userRepository: Repository<UserEntity>,
     private readonly dataSource: DataSource,
   ) {}
+
+  // 유저 생성 (저장)
   async save(
     id: string,
     email: string,
@@ -34,5 +36,11 @@ export class UserRepository implements IUserRepository {
 
       await manager.save(user);
     });
+  }
+
+  // 유저 이메일 조회
+  async findByEmail(email: string): Promise<UserEntity | undefined> {
+    const user = await this.userRepository.findOne({ where: { email } });
+    return user;
   }
 }
