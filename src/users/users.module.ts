@@ -7,6 +7,9 @@ import { UserFactory } from './domain/user.factory';
 import { UserEntity } from './infrastructure/db/entity/user.entity';
 import { UserRepository } from './infrastructure/db/repository/user.repository';
 import { UsersController } from './interface/users.controller';
+import { LoginHandler } from './application/command/login.handler';
+import { AuthService } from '@/auth/auth.service';
+import { SessionService } from '@/session/session.service';
 
 const repository = [
   {
@@ -17,13 +20,24 @@ const repository = [
 
 const entity = [UserEntity];
 
-const commandHandler = [CreateAccountHandler];
+const commandHandler = [CreateAccountHandler, LoginHandler];
 
 const factory = [UserFactory];
+
+const service = [
+  {
+    provide: 'AuthService',
+    useClass: AuthService,
+  },
+  {
+    provide: 'SessionService',
+    useClass: SessionService,
+  },
+];
 
 @Module({
   imports: [CqrsModule, TypeOrmModule.forFeature(entity)],
   controllers: [UsersController],
-  providers: [...commandHandler, ...repository, ...factory],
+  providers: [...commandHandler, ...repository, ...factory, ...service],
 })
 export class UsersModule {}

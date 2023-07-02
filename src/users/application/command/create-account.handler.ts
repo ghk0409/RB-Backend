@@ -22,8 +22,12 @@ export class CreateAccountHandler
       createAccountDto: { email, password, name, role },
     } = command;
 
-    console.log('111111', email, password, name);
-    // TODO: 이메일 중복 체크 (가입 유무)
+    // 이메일 중복 체크
+    const user = await this.userRepository.findByEmail(email);
+
+    if (user) {
+      throw new Error('이미 가입된 이메일입니다. 다른 이메일을 사용해주세요.');
+    }
 
     const id = ulid();
     const signupVerifyToken = uuid.v4();
