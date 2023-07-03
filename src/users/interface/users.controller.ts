@@ -46,6 +46,7 @@ export class UsersController {
       httpOnly: true,
       secure: true,
       maxAge: 1000 * 60 * 60 * 24 * 1, // 1일
+      sameSite: 'none',
     });
 
     return response.send({
