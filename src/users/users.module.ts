@@ -2,14 +2,15 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { AuthService } from '@/auth/auth.service';
+import { SessionService } from '@/session/session.service';
+
 import { CreateAccountHandler } from './application/command/create-account.handler';
+import { LoginHandler } from './application/command/login.handler';
 import { UserFactory } from './domain/user.factory';
 import { UserEntity } from './infrastructure/db/entity/user.entity';
 import { UserRepository } from './infrastructure/db/repository/user.repository';
 import { UsersController } from './interface/users.controller';
-import { LoginHandler } from './application/command/login.handler';
-import { AuthService } from '@/auth/auth.service';
-import { SessionService } from '@/session/session.service';
 
 const repository = [
   {

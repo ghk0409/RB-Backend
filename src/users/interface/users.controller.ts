@@ -1,11 +1,11 @@
 import { Body, Controller, Get, Post, Res } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
+import { Response } from 'express';
 
 import { CreateAccountCommand } from '../application/command/create-accout.command';
+import { LoginCommand } from '../application/command/login.command';
 import { CreateAccountDto } from './dtos/createAccount.dto';
 import { LoginDto } from './dtos/login.dto';
-import { LoginCommand } from '../application/command/login.command';
-import { Response } from 'express';
 
 @Controller('users')
 export class UsersController {
@@ -34,17 +34,25 @@ export class UsersController {
 
   // 로그인
   @Post('login')
-  async login(@Body() loginDto: LoginDto, @Res() response): Promise<any> {
+  async login(
+    @Body() loginDto: LoginDto,
+    @Res() response: Response,
+  ): Promise<any> {
     const command = new LoginCommand(loginDto);
 
     const sessionId = await this.commandBus.execute(command);
-    console.log('111111', sessionId);
+
     response.cookie('sessionId', sessionId, {
       httpOnly: true,
       secure: true,
       maxAge: 1000 * 60 * 60 * 24 * 1, // 1일
     });
-    console.log('2222222', '여기');
-    return response.send(sessionId);
+
+    return response.send({
+      status: 'success',
+      data: {
+        sessionId,
+      },
+    });
   }
 }

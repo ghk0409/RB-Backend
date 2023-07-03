@@ -1,7 +1,8 @@
-import { Module } from '@nestjs/common';
-import { SessionService } from './session.service';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
+import { Module } from '@nestjs/common';
+
 import { SessionEventsHandler } from './event/session-events.handler';
+import { SessionService } from './session.service';
 
 const eventHandler = [SessionEventsHandler];
 
