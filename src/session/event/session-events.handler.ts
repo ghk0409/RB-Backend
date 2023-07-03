@@ -1,6 +1,6 @@
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
+
 import { SessionIdSetEvent } from './session-id-set.event';
-import { Response } from 'express';
 
 @EventsHandler()
 export class SessionEventsHandler implements IEventHandler<SessionIdSetEvent> {

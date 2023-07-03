@@ -1,8 +1,14 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import * as cookieParser from 'cookie-parser';
 
 import { AuthModule } from './auth/auth.module';
+import { LoginMiddleware } from './auth/login.middleware';
 import { CommonModule } from './common/common.module';
 import { SessionModule } from './session/session.module';
 import { UsersModule } from './users/users.module';
@@ -19,10 +25,19 @@ import { UsersModule } from './users/users.module';
     UsersModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    // {
+    //   provide: APP_INTERCEPTOR,
+    //   useClass: ResponseInterceptor,
+    // },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(cookieParser()).forRoutes('*');
+    consumer.apply(LoginMiddleware).forRoutes({
+      path: '/users/login',
+      method: RequestMethod.ALL,
+    });
   }
 }

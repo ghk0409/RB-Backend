@@ -1,4 +1,4 @@
-import { Inject } from '@nestjs/common';
+import { HttpException, Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { IUserRepository } from 'src/users/domain/repository/iuser.repository';
 import { UserFactory } from 'src/users/domain/user.factory';
@@ -26,7 +26,10 @@ export class CreateAccountHandler
     const user = await this.userRepository.findByEmail(email);
 
     if (user) {
-      throw new Error('이미 가입된 이메일입니다. 다른 이메일을 사용해주세요.');
+      throw new HttpException(
+        '이미 가입된 이메일입니다. 다른 이메일을 사용해주세요.',
+        400,
+      );
     }
 
     const id = ulid();

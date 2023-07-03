@@ -1,8 +1,8 @@
-import { Payload } from '@/common/interface/payload.interface';
-import { UserRole } from '@/users/infrastructure/db/entity/user.entity';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as jwt from 'jsonwebtoken';
+
+import { Payload } from '@/common/interface/payload.interface';
 
 @Injectable()
 export class AuthService {
