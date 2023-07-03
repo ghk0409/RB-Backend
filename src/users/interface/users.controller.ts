@@ -43,10 +43,11 @@ export class UsersController {
     const sessionId = await this.commandBus.execute(command);
 
     response.cookie('sessionId', sessionId, {
+      domain: 'https://randb.vercel.app/',
       httpOnly: true,
       secure: true,
       maxAge: 1000 * 60 * 60 * 24 * 1, // 1일
-      sameSite: 'none',
+      // sameSite: 'none',
     });
 
     return response.send({
