@@ -14,10 +14,9 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
     @Inject('UserRepository')
     private readonly userRepository: IUserRepository,
     @Inject('AuthService')
-    private readonly authService: IAuthService,
-    @Inject('SessionService')
-    private readonly sessionService: ISessionService,
-  ) {}
+    private readonly authService: IAuthService, // @Inject('SessionService')
+  ) // private readonly sessionService: ISessionService,
+  {}
 
   async execute(command: LoginCommand): Promise<any> {
     const {
@@ -35,20 +34,17 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
     }
 
     // JWT 토큰 발급
-    // const token = await this.authService.sign({
-    //   id: user.id,
-    //   email: user.email,
-    //   role: user.role,
-    // });
+    const token = await this.authService.sign({
+      id: user.id,
+    });
 
     // Session ID 발급
-    const sessionId = uuid.v4();
+    // const sessionId = uuid.v4();
     // Session 저장
-    await this.sessionService.setUserSession(sessionId, user);
-
+    // await this.sessionService.setUserSession(sessionId, user);
     // Session ID 쿠키 저장
     // this.eventBus.publish(new SessionIdSetEvent(sessionId));
 
-    return sessionId;
+    return token;
   }
 }

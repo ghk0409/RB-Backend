@@ -3,19 +3,26 @@ import {
   CanActivate,
   ExecutionContext,
   HttpException,
+  Inject,
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Redis } from 'ioredis';
 
 import { AllowedRoles } from './role.decorator';
+import { AuthService } from './auth.service';
+import { IUserRepository } from '@/users/domain/repository/iuser.repository';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     @InjectRedis()
     private readonly redis: Redis,
+    @Inject('AuthService')
+    private readonly authService: AuthService,
     private readonly reflector: Reflector,
+    @Inject('UserRepository')
+    private readonly userRepository: IUserRepository,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -31,28 +38,31 @@ export class AuthGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest();
-    const sessionId = request.cookies['sessionId'];
+    const token = request.headers['rb-token'];
 
-    // Session 체크
-    if (sessionId) {
-      const isExistedSession = await this.redis.hgetall(sessionId);
+    if (token) {
+      const decoded = await this.authService.verify(token.toString());
 
-      // 요청 session이 존재하지 않으면 false (요청 session이 DB에 존재하지 않으므로 비정상적인 요청)
-      if (!isExistedSession) {
+      if (typeof decoded === 'object' && decoded.hasOwnProperty('id')) {
+        const user = await this.userRepository.findById(decoded.id);
+
+        if (!user) {
+          return false;
+        }
+
+        request.user = user;
+
+        // private resolver에서 모두 접근 가능한 resolver인 경우
+        if (roles.includes('Any')) {
+          return true;
+        }
+        // roles에 해당 user의 role이 있는지 확인
+        return roles.includes(user.role);
+      } else {
         return false;
       }
-
-      // Any role이면 모든 사용자 true
-      if (roles.includes('Any')) {
-        return true;
-      }
-
-      // Session의 role이 요청 role에 포함되어 있으면 true
-      return roles.includes(isExistedSession.role);
-      // return true;
     } else {
-      throw new HttpException('로그인이 필요합니다.', 401);
-      // return false;
+      return false;
     }
   }
 }
