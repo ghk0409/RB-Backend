@@ -11,6 +11,7 @@ import { UserFactory } from './domain/user.factory';
 import { UserEntity } from './infrastructure/db/entity/user.entity';
 import { UserRepository } from './infrastructure/db/repository/user.repository';
 import { UsersController } from './interface/users.controller';
+import { AuthModule } from '@/auth/auth.module';
 
 const repository = [
   {
@@ -30,15 +31,16 @@ const service = [
     provide: 'AuthService',
     useClass: AuthService,
   },
-  {
-    provide: 'SessionService',
-    useClass: SessionService,
-  },
+  // {
+  //   provide: 'SessionService',
+  //   useClass: SessionService,
+  // },
 ];
 
 @Module({
   imports: [CqrsModule, TypeOrmModule.forFeature(entity)],
   controllers: [UsersController],
   providers: [...commandHandler, ...repository, ...factory, ...service],
+  // exports: [...repository],
 })
 export class UsersModule {}

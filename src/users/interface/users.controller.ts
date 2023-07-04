@@ -1,17 +1,20 @@
-import { Body, Controller, Get, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
-import { Response } from 'express';
 
 import { CreateAccountCommand } from '../application/command/create-accout.command';
 import { LoginCommand } from '../application/command/login.command';
 import { CreateAccountDto } from './dtos/createAccount.dto';
 import { LoginDto } from './dtos/login.dto';
+import { AuthGuard } from '@/auth/auth.guard';
+import { Role } from '@/auth/role.decorator';
 
 @Controller('users')
+@UseGuards(AuthGuard)
 export class UsersController {
   constructor(private readonly commandBus: CommandBus) {}
 
   @Get('test1')
+  @Role(['Admin'])
   test(): string {
     console.log('test');
     return '테스트 중입니당';
@@ -34,27 +37,11 @@ export class UsersController {
 
   // 로그인
   @Post('login')
-  async login(
-    @Body() loginDto: LoginDto,
-    @Res() response: Response,
-  ): Promise<any> {
+  async login(@Body() loginDto: LoginDto): Promise<any> {
     const command = new LoginCommand(loginDto);
 
-    const sessionId = await this.commandBus.execute(command);
+    const token = await this.commandBus.execute(command);
 
-    response.cookie('sessionId', sessionId, {
-      // domain: '.randb.vercel.app',
-      httpOnly: true,
-      secure: true,
-      maxAge: 1000 * 60 * 60 * 24 * 1, // 1일
-      sameSite: 'lax',
-    });
-
-    return response.send({
-      status: 'success',
-      data: {
-        sessionId,
-      },
-    });
+    return token;
   }
 }
