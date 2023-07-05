@@ -14,6 +14,7 @@ module.exports = {
     'unused-imports',
   ],
   extends: [
+    'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
     // 'eslint:recommended',

@@ -9,6 +9,8 @@ class Response<T> {
 @Injectable()
 export class ResponseInterceptor implements NestInterceptor<Response<any>> {
   intercept(context, next) {
-    return next.handle().pipe(map((data) => ({ status: 'success', data })));
+    return next
+      .handle()
+      .pipe(map((data) => ({ status: 'success', data: data ?? true })));
   }
 }
