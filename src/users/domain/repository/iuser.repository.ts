@@ -1,7 +1,6 @@
-import {
-  UserEntity,
-  UserRole,
-} from 'src/users/infrastructure/db/entity/user.entity';
+import { UserRole } from 'src/users/infrastructure/db/entity/user.entity';
+
+import { User } from '../user';
 
 export interface IUserRepository {
   // 유저 생성
@@ -15,8 +14,8 @@ export interface IUserRepository {
   ): Promise<void>;
 
   // 유저 이메일로 조회
-  findByEmail(email: string): Promise<UserEntity | undefined>;
+  findByEmail(email: string): Promise<User>;
 
   // 유저 ID로 조회
-  findById(id: string): Promise<UserEntity | undefined>;
+  findById(id: string): Promise<User>;
 }

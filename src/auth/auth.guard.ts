@@ -2,16 +2,16 @@ import { InjectRedis } from '@liaoliaots/nestjs-redis';
 import {
   CanActivate,
   ExecutionContext,
-  HttpException,
   Inject,
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Redis } from 'ioredis';
 
-import { AllowedRoles } from './role.decorator';
-import { AuthService } from './auth.service';
 import { IUserRepository } from '@/users/domain/repository/iuser.repository';
+
+import { AuthService } from './auth.service';
+import { AllowedRoles } from './role.decorator';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -43,7 +43,10 @@ export class AuthGuard implements CanActivate {
     if (token) {
       const decoded = await this.authService.verify(token.toString());
 
-      if (typeof decoded === 'object' && decoded.hasOwnProperty('id')) {
+      if (
+        typeof decoded === 'object' &&
+        Object.prototype.hasOwnProperty.call(decoded, 'id')
+      ) {
         const user = await this.userRepository.findById(decoded.id);
 
         if (!user) {
@@ -57,7 +60,7 @@ export class AuthGuard implements CanActivate {
           return true;
         }
         // roles에 해당 user의 role이 있는지 확인
-        return roles.includes(user.role);
+        return roles.includes(user.getRole());
       } else {
         return false;
       }

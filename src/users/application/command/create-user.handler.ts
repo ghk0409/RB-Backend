@@ -5,23 +5,20 @@ import { UserFactory } from 'src/users/domain/user.factory';
 import { ulid } from 'ulid';
 import * as uuid from 'uuid';
 
-import { CreateAccountCommand } from './create-accout.command';
+import { CreateUserCommand } from './create-user.command';
 
-@CommandHandler(CreateAccountCommand)
-export class CreateAccountHandler
-  implements ICommandHandler<CreateAccountCommand>
-{
+@CommandHandler(CreateUserCommand)
+export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
   constructor(
     @Inject('UserRepository')
     private readonly userRepository: IUserRepository,
     private readonly userFactory: UserFactory,
   ) {}
 
-  async execute(command: CreateAccountCommand): Promise<any> {
+  async execute(command: CreateUserCommand): Promise<any> {
     const {
-      createAccountDto: { email, password, name, role },
+      createUserDto: { email, password, name, role },
     } = command;
-
     // 이메일 중복 체크
     const user = await this.userRepository.findByEmail(email);
 

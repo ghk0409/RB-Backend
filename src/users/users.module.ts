@@ -3,15 +3,14 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AuthService } from '@/auth/auth.service';
-import { SessionService } from '@/session/session.service';
 
-import { CreateAccountHandler } from './application/command/create-account.handler';
+import { CreateUserHandler } from './application/command/create-user.handler';
 import { LoginHandler } from './application/command/login.handler';
+import { GetUserInfoHandler } from './application/query/get-user-info.handler';
 import { UserFactory } from './domain/user.factory';
 import { UserEntity } from './infrastructure/db/entity/user.entity';
 import { UserRepository } from './infrastructure/db/repository/user.repository';
 import { UsersController } from './interface/users.controller';
-import { AuthModule } from '@/auth/auth.module';
 
 const repository = [
   {
@@ -22,7 +21,8 @@ const repository = [
 
 const entity = [UserEntity];
 
-const commandHandler = [CreateAccountHandler, LoginHandler];
+const commandHandler = [CreateUserHandler, LoginHandler];
+const queryHandler = [GetUserInfoHandler];
 
 const factory = [UserFactory];
 
@@ -40,7 +40,13 @@ const service = [
 @Module({
   imports: [CqrsModule, TypeOrmModule.forFeature(entity)],
   controllers: [UsersController],
-  providers: [...commandHandler, ...repository, ...factory, ...service],
+  providers: [
+    ...commandHandler,
+    ...repository,
+    ...factory,
+    ...service,
+    ...queryHandler,
+  ],
   // exports: [...repository],
 })
 export class UsersModule {}

@@ -1,11 +1,9 @@
 import { HttpException, Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import * as uuid from 'uuid';
 
 import { IUserRepository } from '@/users/domain/repository/iuser.repository';
 
 import { IAuthService } from '../adapter/iauth.service';
-import { ISessionService } from '../adapter/isession.service';
 import { LoginCommand } from './login.command';
 
 @CommandHandler(LoginCommand)
@@ -14,9 +12,8 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
     @Inject('UserRepository')
     private readonly userRepository: IUserRepository,
     @Inject('AuthService')
-    private readonly authService: IAuthService, // @Inject('SessionService')
-  ) // private readonly sessionService: ISessionService,
-  {}
+    private readonly authService: IAuthService, // @Inject('SessionService') // private readonly sessionService: ISessionService,
+  ) {}
 
   async execute(command: LoginCommand): Promise<any> {
     const {
@@ -35,7 +32,7 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
 
     // JWT 토큰 발급
     const token = await this.authService.sign({
-      id: user.id,
+      id: user.getId(),
     });
 
     // Session ID 발급

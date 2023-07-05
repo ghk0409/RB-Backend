@@ -19,7 +19,7 @@ export class AuthService {
   }
 
   // JWT 토큰 검증
-  async verify(token: string): Promise<any> {
+  async verify(token: string): Promise<string | jwt.JwtPayload> {
     return jwt.verify(token, this.jwtSecretKey);
   }
 }

@@ -4,6 +4,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { AllExceptionFilter } from './common/filter/exception.filter';
 import { ResponseInterceptor } from './common/interceptor/response.interceptor';
+import { setupSwagger } from './common/swagger/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -16,12 +17,21 @@ async function bootstrap() {
     credentials: true,
   });
 
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
+  // app.useLogger(['error', 'warn', 'log', 'debug', 'verbose']);
 
   app.setGlobalPrefix('api');
 
   app.useGlobalFilters(new AllExceptionFilter());
   app.useGlobalInterceptors(new ResponseInterceptor());
+
+  setupSwagger(app);
 
   await app.listen(4000);
 }

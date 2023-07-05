@@ -1,3 +1,6 @@
+import { InternalServerErrorException } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
+
 import { UserRole } from '../infrastructure/db/entity/user.entity';
 
 // User 도메인 클래스
@@ -26,5 +29,16 @@ export class User {
   // 유저 Role 반환
   getRole(): Readonly<UserRole> {
     return this.role;
+  }
+
+  // 패스워드 체크
+  async checkPassword(aPassword: string): Promise<boolean> {
+    try {
+      const ok = await bcrypt.compare(aPassword, this.password);
+      return ok;
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException();
+    }
   }
 }
