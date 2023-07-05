@@ -6,6 +6,7 @@ import { AuthService } from '@/auth/auth.service';
 
 import { CreateUserHandler } from './application/command/create-user.handler';
 import { LoginHandler } from './application/command/login.handler';
+import { UpdateUserHandler } from './application/command/update-user.handler';
 import { GetUserInfoHandler } from './application/query/get-user-info.handler';
 import { UserFactory } from './domain/user.factory';
 import { UserEntity } from './infrastructure/db/entity/user.entity';
@@ -21,7 +22,7 @@ const repository = [
 
 const entity = [UserEntity];
 
-const commandHandler = [CreateUserHandler, LoginHandler];
+const commandHandler = [CreateUserHandler, LoginHandler, UpdateUserHandler];
 const queryHandler = [GetUserInfoHandler];
 
 const factory = [UserFactory];

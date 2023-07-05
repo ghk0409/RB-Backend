@@ -1,5 +1,7 @@
 import { UserRole } from 'src/users/infrastructure/db/entity/user.entity';
 
+import { UpdateUserDto } from '@/users/interface/dtos/updateUser.dto';
+
 import { User } from '../user';
 
 export interface IUserRepository {
@@ -18,4 +20,7 @@ export interface IUserRepository {
 
   // 유저 ID로 조회
   findById(id: string): Promise<User>;
+
+  // 유저 수정
+  update(id: string, updateUserDto: UpdateUserDto): Promise<void>;
 }
