@@ -5,6 +5,7 @@ import { DataSource, Repository } from 'typeorm';
 
 import { User } from '@/users/domain/user';
 import { UserFactory } from '@/users/domain/user.factory';
+import { UpdateUserDto } from '@/users/interface/dtos/updateUser.dto';
 
 import { UserEntity, UserRole } from '../entity/user.entity';
 
@@ -84,5 +85,27 @@ export class UserRepository implements IUserRepository {
     );
 
     return user;
+  }
+
+  // 유저 수정
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<void> {
+    this.dataSource.transaction(async (manager) => {
+      const user = await manager.findOne(UserEntity, { where: { id } });
+      const { name, password, role } = updateUserDto;
+
+      if (name) {
+        user.name = name;
+      }
+
+      if (password) {
+        user.password = password;
+      }
+
+      if (role) {
+        user.role = role;
+      }
+
+      await manager.save(user);
+    });
   }
 }
