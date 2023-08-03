@@ -1,4 +1,3 @@
-import { InjectRedis } from '@liaoliaots/nestjs-redis';
 import {
   CanActivate,
   ExecutionContext,
@@ -6,7 +5,6 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { Redis } from 'ioredis';
 
 import { IUserRepository } from '@/users/domain/repository/iuser.repository';
 
@@ -16,8 +14,8 @@ import { AllowedRoles } from './role.decorator';
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
-    @InjectRedis()
-    private readonly redis: Redis,
+    // @InjectRedis()
+    // private readonly redis: Redis,
     @Inject('AuthService')
     private readonly authService: AuthService,
     private readonly reflector: Reflector,
