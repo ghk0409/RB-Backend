@@ -1,10 +1,19 @@
-import { Body, Controller, Get, Post, Put, UseGuards } from '@nestjs/common';
-import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
+import { CommandBus, EventBus, QueryBus } from '@nestjs/cqrs';
 import { ApiBody, ApiSecurity, ApiTags } from '@nestjs/swagger';
 
 import { AuthGuard } from '@/auth/auth.guard';
 import { AuthUser } from '@/auth/auth-user.decorator';
 import { Role } from '@/auth/role.decorator';
+import { EmailService } from '@/email/email.service';
 
 import { CreateUserCommand } from '../application/command/create-user.command';
 import { LoginCommand } from '../application/command/login.command';
@@ -22,6 +31,9 @@ export class UsersController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
+    @Inject('MailService')
+    private readonly emailService: EmailService,
+    private readonly eventBus: EventBus,
   ) {}
 
   // 회원가입
@@ -68,4 +80,8 @@ export class UsersController {
 
     return this.commandBus.execute(command);
   }
+
+  // 인증 메일에서 버튼 누르면 프론트로 이동하고 거기서 바로 이 API를 호출해서 인증 완료 + 로그인(jwt 토큰 발급)
+  @Post('verify-email')
+  async verifyEmail(@Body() { email }: { email: string }): Promise<void> {}
 }
