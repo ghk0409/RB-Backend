@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
+import { EventBus } from '@nestjs/cqrs';
 
 import { UserRole } from '../infrastructure/db/entity/user.entity';
+import { CreateUserEvent } from './create-user.event';
 import { User } from './user';
 
 @Injectable()
 export class UserFactory {
+  constructor(private readonly eventBus: EventBus) {}
   // 유저 객체 생성 (DTO -> 도메인 객체)
   create(
     id: string,
@@ -16,7 +19,8 @@ export class UserFactory {
   ): User {
     const user = new User(id, email, password, name, signupVerifyToken, role);
 
-    // TODO: 추후 이벤트 버스를 통해 이벤트 발행 (인증 이메일 발송)
+    // 인증 메일 발송 이벤트
+    this.eventBus.publish(new CreateUserEvent(email, signupVerifyToken));
 
     return user;
   }
